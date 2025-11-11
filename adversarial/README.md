@@ -102,7 +102,7 @@ Turn in both a PDF of the writeup of your question and a json including the
 raw text of the question and answer to Gradescope. Both examples of both
 writeup and the json file are included in this directory.
 
-Please make sure that your JSON file passes a validator (python question_validator.py yourfile.json) before submitting. This file check whether JSON is in correct format and your questions (either pyramidal or multiple choice) contains text, answer, and choices (if MC). 
+Please make sure that your JSON file passes a validator (`python question_validator.py yourfile.json`) before submitting. This file check whether JSON is in correct format and your questions (either pyramidal or multiple choice) contains text, answer, and choices (if MC). 
 
 There should be one tossup and one bonus for each member of the group.
 

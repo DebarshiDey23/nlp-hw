@@ -149,6 +149,17 @@ FAQ
 
 *A:* No, submit your best questions.  However, you will probably need to write many bad questions before you manage to write a good question.
 
+*Q:* How strict is the one page limit?
+
+*A:* It's fine to go beyond 1 page per question with those LLM
+responses as long as your explanation doesn't. 
+
+*Q:* Is it okay if the LLM doesn't answer the question because of
+safety triggers?
+
+*A:* Yes, that’s a fine strategy for this. But obviously your
+questions should actually be safe for work.
+
 *Q:* What humans should be able to answer the question?  Is it okay if it's hard?
 
 *A:* At the minimum, a skilled trivia player should be able to get the question right.  However, it's even better if more people can get the question right.  The easier the question is for an average human (let's assume American undergrad for the purposes of this exercise), the more impressive it is that a computer cannot answer it.
@@ -204,6 +215,32 @@ Let's consider what the definition of pyramidal is: the question gets easier and
 
 It's not headquartered in Biel, Switzerland, but its logo looks like the last letter of the Greek alphabet.
 It's not the protagonist of Thirty Rock, but ...
+```
+
+*Q:* How can I make a spatial reasoning question pyramidal?
+
+*A:* To make a geometry question pyramidal, you can walk through the steps to solve the problem. In other words, provide the correct chain of thought that the model would use to solve the problem.
+
+```
+
+This point is the center of the ellipse that passes through (0, 1), (2, 0), (3/2, \sqrt{3} + 2), (3/2, \sqrt{3} - 2), and (2, 2).  To find the center, the first step would be to recognize that the line connecting (2, 2) and (2, 0) must pass through the center.  Next, you can recognize that (2, 0) must lie on the semi-minor axis but that (0, 1) must lie on the semi-major axis.  This implies that the semi-major axis is 4 but the semi-minor is 2, so the radius must be one.  This puts the center of the ellipse at the midpoint of (2, 2) and (2, 0), which---for 10 points---is what point?
+```
+
+*Q:* Is it okay of MCQ questions are identical to the pyramidal
+questions?
+
+It's probably suboptimal for them to be **identical**.  First, a good pyramidal question when viewed as a one-shot MCQ question will have some redundancy:
+
+```
+
+Pyramidal: He wrote about how the incompetency of Franco's marksmen saved his life while fighting in the Spanish Civil War.  He wrote about his inability to earn a living wage in two European capitals.  In a fictional book, some of his characters proclaimed that "two legs are better", while another fictional book featured the "two minutes of hate".  For 10 points, name this author born Eric Arthur Blair who wrote Homage to Catalonia, Down and Out in London and Paris, Animal Farm, and 1984.
+```
+
+If a system sees all of that at once, the only relevant portion could be reduced to:
+
+```
+
+Who wrote Homage to Catalonia, Down and Out in London and Paris, Animal Farm, and 1984?
 ```
 
 *Q:* What computers should ~not~ be able to answer the questions?

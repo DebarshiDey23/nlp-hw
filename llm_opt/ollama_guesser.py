@@ -51,7 +51,7 @@ def validate_answer(example: dspy.Example, pred, trace=None):
     if len(contexts) > 0:
         retrieval_bonus /= len(contexts)
 
-    logging.info("Retrieval bonus", example.answer, retrieval_bonus, str(x["guess"] for x in contexts))
+    logging.info("Retrieval bonus = %0.2f from  ans=%s clues=%s" % (retrieval_bonus, example.answer, ", ".join(x["guess"] for x in contexts)))
         
     # Bonus for correct confidence 
     if correct:

@@ -27,6 +27,10 @@ download the model you'll be using.  ``gemma3:4b`` will run on most hardware.
 Things will be much better if you have a GPU to use.  The TAs will be making
 Nexus accounts available if you do not have your own hardware.
 
+For running on Nexus, you do not have sudo, so you'll need to do a (local
+install)[https://medium.com/@abdulsalamelelu/executing-ollama-on-hpc-without-sudo-access-7eb6217e6fcb],
+which will be slightly more complicated.
+
 What you Have to Do (Guesser)
 =====
 
@@ -51,6 +55,11 @@ Some suggestions on what you could do (non-exhaustive, and you can try other stu
 - Tune the RAG outputs (right now, it's just the retrieved sentence, more context might be helpful)
 - Create explicit intermediate results that could help calibration (e.g., number of RAG hits that match, overlap between RAG and output, does the guess appear in the question text)
 
+But whatever you do, the default main function of `ollama_guesser.py` will
+train a teleprompter for you.  At the moment, the code is everything I had in
+my lecture.  You may want to do more or less than what I did.
+
+   ./venv/bin/python3 ollama_guesser.py
 
 What you Have to Do (Buzzer)
 =====

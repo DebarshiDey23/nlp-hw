@@ -105,7 +105,7 @@ This will go faster afterward.
 * The command line above uses the default tf-idf guesser, but you'll want to
   replace it with the DSPy-based guesser you've optimized.  E.g., something like.
 
-           ./venv/bin/python3 lorabert_buzzer.py --questions=../data/qanta.buzztrain.json.gz --secondary_questions=../data/qanta.buzzdev.json.gz --buzzer_guessers=Tfidf --load=True --buzzer_type='lorabert' --limit=100
+           ./venv/bin/python3 lorabert_buzzer.py --questions=../data/qanta.buzztrain.json.gz --secondary_questions=../data/qanta.buzzdev.json.gz --buzzer_guessers=Ollama --load=True --buzzer_type='lorabert' --limit=100
 
   This loads the save DSPy model from models/guesser.json ... if you saved it
   to a different file, you'll need to change the `ollama_guesser_filename`

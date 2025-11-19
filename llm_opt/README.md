@@ -94,8 +94,8 @@ This will go faster afterward.
   function.  You will probably want to create a (partial
   object)[https://docs.python.org/3/library/functools.html#partial-objects].  
 
-* You shouldn't need to change anything in `LoRABertBuzzer`, it should run the
-  training for you and prepare the data.
+* The only changes you should have to make in LoRABertBuzzer are to add
+  methods to load and save the buzzer to a file.
 
 * Run adaptation on some data (use `limit` if you don't have a GPU).  This is
   more of a proof-of-concept, and you don't need great accuracy to satisfy the
@@ -129,6 +129,12 @@ Enough", you must at least establish your baseline values).
 
 * Your `dspy.json` model (the final prompts found via teleprompting).
 
+* Your `parameters.py` with appropriate defaults to run your model
+
+* Your `ollama_guesser.py` with any changes to the prompt definitions
+
+* Your `lorabert_buzzer.py` with completed code
+
 Extra Credit
 ======
 
@@ -138,6 +144,12 @@ Extra Credit
   We could add more information or format it better.  A more involved (but
   likely better) is to further extend the model to better encode additional
   floating point features (like you did in the feature engineering homework).
+
+* [Up to 5 Points] Add additional sources of information to DSPy retrieval
+  (e.g., Wikipedia).
+
+* [Up to 5 Points] Explicitly add multihop reasoning to DSPy guesser to solve
+  subproblems.
 
 * [Up to 5 Points] Experiment with what layers are most necessary for the best
   improvements and test values of alpha and rank that work best (you cannot
@@ -149,8 +161,62 @@ Extra Credit
 * [Up to 3 Points] The training code in `train` are taken directly from the
   Huggingface examples and I didn't think too much about them.  It's not clear
   that they're a good fit for the data.  Can you find something substantially
-  better?  (Keeping the model / adaptation / etc. constant.) 
+  better?  (Keeping the model / adaptation / etc. constant.)  For example, we
+  know accuracy isn't exactly what we want, but that's what's being optimized.
 
+Hints
+=================
+
+If you have access to a GPU, you should use it whenever you can for both
+Ollama and for the BERT adaptation.
+
+You'll want to tune your tf-idf retriever. 
+
+    ./venv/bin/python3 eval.py --evaluate guesser --questions ../data/qanta.guessdev.json.gz --cutoff 200 --num_guesses 10
+
+Some ideas:
+     * Add bigrams to the vocabulary
+     
+     * Make sure your eval is not on the full question (the default).  A
+       suggestion would be to do 200 characters (as above), but less is
+       obviously better.  Recall is more important than precision.
+
+     * Once it's settled, you'll want to start tuning your Ollama Guesser
+
+You can reuse the eval script for that:
+
+    ./venv/bin/python3 eval.py --evaluate guesser --questions ../data/qanta.buzztrain.json.gz --limit 100 --num_guesses 1 --guesser_type Ollama
+
+    * It should be better than tf-idf ... otherwise, what's the point?
+
+    * I used buzztrain this time because it's used guessdev already.  It's
+      okay to use a little bit of buzztrain on this to see how well it's
+      doing.
+
+There are also options for improving the Buzzer:
+
+      * You can use a different base model
+
+      * You can add more fields in the `dataset_from_questions` function
+
+      * You can use a different objective function
+
+Once that's trained, you can evaluate it as usual:
+
+     ./venv/bin/python3 eval.py --evaluate buzzer --questions ../data/qanta.buzzdev.json.gz --limit 100 --num_guesses 1 --buzzer_guessers=Tfidf --buzzer_type='lorabert'
+
+It could be that you've done a really good job getting DSPy to do everything
+you've need (or you heavily used buzzer train / dev).  In which case you can
+use threshold_buzzer.py if the BERT training is becoming difficult.
+      
+      ./venv/bin/python3 -i eval.py --evaluate buzzer --questions ../data/qanta.buzzdev.json.gz --limit 100 --num_guesses 1 --buzzer_guessers=Tfidf --buzzer_type='threshold' --threshold_buzzer_threshold=0.4
+
+If you do this, make sure you set `parameters.py` to use that buzzer by
+default (and not LoRABERT).
+
+**WARNING**: It's very easy to get things *running* by making minimal
+  modifications to the provided code.  Getting things working well will
+  require real time and preparation.
 
 FAQ
 ========

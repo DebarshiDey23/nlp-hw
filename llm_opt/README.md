@@ -142,7 +142,7 @@ For this HW, since running ollama on Gradescope isn't possible for us, we will g
 * 11/21 at 11:59PM ET
 * and once a day at 11:59PM ET until 11/28
 
-We will update scores on Gradescope after running with:
+We will update these scores on Gradescope after running:
 * Guesser: precision and recall,
 * Buzzer: expected win, best_score, buzz ratio, buzz position.
 

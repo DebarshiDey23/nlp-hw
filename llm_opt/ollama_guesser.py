@@ -5,6 +5,9 @@ from guesser import Guesser
 from gpr_guesser import kINSTRUCTIONS
 
 import dspy
+lm = dspy.LM('ollama_chat/gemma3:4b', api_base='http://localhost:11434', api_key='')
+dspy.configure(lm=lm)
+
 
 class OllamaGuesser(Guesser):
     def __init__(self):        

@@ -120,7 +120,7 @@ To have a good enough solution, you must both
 
 What to Submit
 =====
-We create two assignments, guesser and buzzer, for this HW. Please submit following files to both (for our grading convenience!). For guesser, the leaderboard will show precision and recall. The buzzer's leaderboard will show expected win, best_score, buzz ratio, buzz position.
+We create an assignment where you will submit your trained guesser and buzzer. Please submit following files to Gradescope.
 
 * Your `analysis.pdf` file (if you don't go beyond the "Good
 Enough", you must at least establish your baseline values).
@@ -134,6 +134,17 @@ Enough", you must at least establish your baseline values).
 * Your `ollama_guesser.py` with any changes to the prompt definitions
 
 * Your `lorabert_buzzer.py` with completed code
+
+For this HW, since running ollama on Gradescope isn't possible for us, we will grade your submission manually. The autograder will only check whether all required files are uploaded. We will run the submissions on 
+* 11/20 at 1:00PM ET
+* 11/20 at 11:59PM ET
+* 11/21 at 1:00PM ET
+* 11/21 at 11:59PM ET
+* and once a day at 11:59PM ET until 11/28
+
+We will update scores on Gradescope after running with:
+* Guesser: precision and recall,
+* Buzzer: expected win, best_score, buzz ratio, buzz position.
 
 Extra Credit
 ======

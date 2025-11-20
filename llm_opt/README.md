@@ -135,6 +135,8 @@ Enough", you must at least establish your baseline values).
 
 * Your `lorabert_buzzer.py` with completed code
 
+* Your `TfidfGuesser.answers.pkl`, `TfidfGuesser.questions.pkl`, `TfidfGuesser.tfidf.pkl` and `TfidfGuesser.vectorizer.pkl` (a tfidf model)
+
 For this HW, since running ollama on Gradescope isn't possible for us, we will grade your submission manually. The autograder will only check whether all required files are uploaded. We will run the submissions on 
 * 11/20 at 1:00PM ET
 * 11/20 at 11:59PM ET

@@ -47,7 +47,8 @@ def initialize_base_model(helper_function=AutoModelForSequenceClassification,
     model = helper_function.from_pretrained(model_name, num_labels=2)
 
     # Freeze the model parameters
-
+    for param in model.parameters():
+        param.requires_grad = False 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     return model, tokenizer
 
@@ -67,6 +68,8 @@ class LoRALayer(torch.nn.Module):
 
         # Complete the initialization of the two weight matrices
         self.alpha = alpha
+        self.A = torch.nn.Parameter(torch.zeros((rank, in_dim)))
+        self.B = torch.nn.Parameter(torch.zeros((out_dim, rank)))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -82,6 +85,9 @@ class LoRALayer(torch.nn.Module):
             output_dimension = torch.Size((x.shape[0], self.out_dim))
 
         # Compute the low-rank delta
+        delta = torch.matmul(x, self.A.T)
+        delta = torch.matmul(delta, self.B.T)
+        delta = delta * (self.alpha / self.A.shape[0])
 
         return delta
 
@@ -95,6 +101,7 @@ class LinearLoRA(torch.nn.Module):
         self.linear = linear
 
         # Initialize the LoRA layer
+        self.lora = LoRALayer(in_dim=linear.in_features, out_dim=linear.out_features, rank=rank, alpha=alpha)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -103,6 +110,7 @@ class LinearLoRA(torch.nn.Module):
         result = self.linear(x)
 
         # Add the LoRA delta
+        result += self.lora(x)
         return result
 
 # TODO(jbg): Get rid of the hardcoded modules so that it generalizes to other models
@@ -117,8 +125,34 @@ def add_lora(model: torch.nn.Module, rank: int, alpha: float,
         alpha: The scaling factor for the LoRA matrices.
         modules_to_adapt: The key of the dictionary is the model component to adapt (e.g., "attention" or "ffn"), and the values are specific linear layers in that component to adapt.  Anything in this dictionary will be adapted, but anything else will remain frozen.
     """
-    
+    target_layer_names = []
+    for layer_list in modules_to_adapt.values():
+        target_layer_names.extend(layer_list)
 
+    # --- MISSING LOGIC STARTS HERE ---
+    for name, module in model.named_modules():
+        
+        parent_name = name.rsplit('.', 1)[0]
+        layer_name = name.rsplit('.', 1)[-1]
+
+        # 1. Check if the current module is a Linear layer and a target
+        if isinstance(module, torch.nn.Linear) and layer_name in target_layer_names:
+            
+            original_linear = module
+            lora_linear = LinearLoRA(original_linear, rank, alpha)
+            
+            # 2. Get the parent module using the correct path from the input 'model'
+            try:
+                # Use get_submodule to find the parent module
+                parent_module = model.get_submodule(parent_name)
+            except AttributeError:
+                # Fallback path if get_submodule fails on the parent path
+                parent_module = model
+
+            logging.info(f"Adding LoRA adaptation to: {name}")
+            
+            # 3. Replace the original Linear layer with the LinearLoRA wrapper
+            setattr(parent_module, layer_name, lora_linear)
     return model
                 
 
@@ -134,7 +168,13 @@ class LoRABertBuzzer(Buzzer):
         """
 
         self.model, self.tokenizer = initialize_base_model(model_name=model_name)
+        device = 'mps' if torch.backends.mps.is_available() else ('cuda' if torch.cuda.is_available() else 'cpu')
+        self.model.to(device)
         add_lora(self.model.distilbert.transformer, rank, alpha)
+        for name, param in self.model.named_parameters():
+            if 'lora' in name or 'classifier' in name or 'pre_classifier' in name:
+                param.requires_grad = True
+                logging.info(f"Unfrozen LoRA/Head parameter: {name}")
 
     def add_data(self, questions):
         """
@@ -215,7 +255,8 @@ class LoRABertBuzzer(Buzzer):
             from transformers import pipeline
 
             # TODO: set this up to use GPU based on device
-            self._classifier = pipeline("text-classification", model=self.model, tokenizer=self.tokenizer)
+            device = torch.device("mps") if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else -1)
+            self._classifier = pipeline("text-classification", model=self.model, tokenizer=self.tokenizer, device = device)
 
             # TODO: Use explainability to generate some features
             self._classifier.coef_ = [[]]

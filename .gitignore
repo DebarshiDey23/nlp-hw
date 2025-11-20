@@ -110,3 +110,8 @@ venv.bak/
 *.bbl
 *.blg
 adversarial/question.synctex.gz
+
+#Models
+llm_opt/models/TfidfGuesser.questions.pkl
+llm_opt/models/TfidfGuesser.tfidf.pkl
+llm_opt/models/TfidfGuesser.vectorizer.pkl
